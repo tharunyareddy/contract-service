@@ -1,0 +1,22 @@
+package com.easyservice.exception;
+
+public class ContractorNotFoundException extends RuntimeException {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public ContractorNotFoundException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	public ContractorNotFoundException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+
+}

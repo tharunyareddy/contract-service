@@ -1,0 +1,190 @@
+package com.easyservice.service;
+
+import java.time.LocalDate;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.easyservice.exception.ContractorNotFoundException;
+import com.easyservice.exception.MaintenanceNotFoundException;
+import com.easyservice.model.Contractor;
+import com.easyservice.model.Maintenance;
+import com.easyservice.model.Priority;
+import com.easyservice.model.Status;
+import com.easyservice.repository.IContractorRepository;
+
+/**
+ * @author Tharunya
+ *
+ */
+
+@Service
+public class ContractorServiceImpl implements IContractorService {
+
+	RestTemplate restTemplate;
+
+	@Autowired
+	public void setRestTemplate(RestTemplate restTemplate) {
+		this.restTemplate = restTemplate;
+	}
+
+	private static final String BASEURL = "http://localhost:8071/maintenance-service/maintenance";
+
+	@Autowired
+	IContractorRepository contractorRepository;
+
+	@Override
+	public Contractor addContractor(Contractor contractor) {
+		return contractorRepository.save(contractor);
+	}
+
+	@Override
+	public void updateContractor(Contractor contractor) {
+		contractorRepository.save(contractor);
+	}
+
+	@Override
+	public void deleteContractor(int contractId) throws ContractorNotFoundException{
+		contractorRepository.deleteById(contractId);
+	}
+
+	@Override
+	public Contractor getByContractorName(String contractorName) throws ContractorNotFoundException{
+		return contractorRepository.findByContractorName(contractorName);
+	}
+
+	@Override
+	public Contractor getByContractName(String contractName) throws ContractorNotFoundException{
+		return contractorRepository.findByContractName(contractName);
+	}
+
+	@Override
+	public List<Contractor> getByStartDate(LocalDate startDate) throws ContractorNotFoundException{
+		return contractorRepository.findByStartDate(startDate);
+	}
+
+	@Override
+	public List<Contractor> getByEndDate(LocalDate endDate) throws ContractorNotFoundException{
+		return contractorRepository.findByEndDate(endDate);
+	}
+
+	@Override
+	public List<Contractor> getByStartDateAndEndDate(LocalDate startDate, LocalDate endDate) throws ContractorNotFoundException{
+		return contractorRepository.findByStartDateAndEndDate(startDate, endDate);
+	}
+
+	@Override
+	public List<Contractor> getAll() {
+		return contractorRepository.findAll();
+	}
+
+	@Override
+	public Maintenance addMaintenance(Maintenance maintenance,int contractId) {
+		Contractor contractor = contractorRepository.findById(contractId).get();
+		maintenance.setContractor(contractor);
+		String url = BASEURL;
+		ResponseEntity<Maintenance> newMaintenance = restTemplate.postForEntity(url,maintenance, Maintenance.class);
+		return newMaintenance.getBody();
+	}
+
+	@Override
+	public void updateMaintenance(Maintenance maintenance) {
+			
+		String url = BASEURL;
+		restTemplate.put(url, maintenance);
+	}
+
+	@Override
+	public void deleteMaintenance(int maintenanceId) throws MaintenanceNotFoundException{
+		String url = BASEURL+"/"+maintenanceId;
+		restTemplate.delete(url, maintenanceId);
+	}
+
+	@Override
+	public Maintenance getById(int maintenanceId) throws MaintenanceNotFoundException{
+		String url = BASEURL + maintenanceId;
+		Maintenance maintenance = restTemplate.getForEntity(url, Maintenance.class).getBody();
+		return maintenance;
+	}
+    
+	
+	@Override
+	public List<Maintenance> getAllMaintenence() {
+		String url = BASEURL;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public Maintenance getByMaintenanceName(String maintenanceName) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceName/" + maintenanceName;
+		Maintenance maintenance = restTemplate.getForEntity(url, Maintenance.class).getBody();
+		return maintenance;
+	}
+
+	@Override
+	public Maintenance getByMaintenanceManager(String maintenanceManager) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceManager/" + maintenanceManager;
+		Maintenance maintenance = restTemplate.getForEntity(url, Maintenance.class).getBody();
+		return maintenance;
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenanceStartDate(LocalDate mStartDate) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceStartDate/" + mStartDate;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenanceEndDate(LocalDate mEndDate) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceEndDate/" + mEndDate;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenanceStatus(Status mStatus) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceStatus/" + mStatus;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenancePriority(Priority mPriority) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenancePriority/" + mPriority;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenanceStartAndEndDate(LocalDate mStartDate, LocalDate mEndDate) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceStartDate/" + mStartDate + "/maintenanceEndDate/" + mEndDate;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public List<Maintenance> getByMaintenanceStatusAndPriority(Status mStatus, Priority mPriority) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceStatus/" + mStatus + "/maintenancePriority/" + mPriority;
+		ResponseEntity<List> response = restTemplate.getForEntity(url, List.class);
+		return response.getBody();
+	}
+
+	@Override
+	public Maintenance getByMaintenanceNameAndStatus(String maintenanceName, Status mStatus) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceName/" + maintenanceName + "/maintenanceStatus/" + mStatus;
+		Maintenance maintenance = restTemplate.getForEntity(url, Maintenance.class).getBody();
+		return maintenance;
+	}
+
+	@Override
+	public Maintenance getByMaintenanceNameAndPriority(String maintenanceName, Priority mPriority) throws MaintenanceNotFoundException{
+		String url = BASEURL + "/maintenanceName/" + maintenanceName + "/maintenancePriority/" + mPriority;
+		Maintenance maintenance = restTemplate.getForEntity(url, Maintenance.class).getBody();
+		return maintenance;
+	}
+
+}

@@ -1,0 +1,70 @@
+package com.easyservice.service;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import com.easyservice.model.Contractor;
+import com.easyservice.model.Maintenance;
+import com.easyservice.model.Priority;
+import com.easyservice.model.Status;
+
+
+public interface IContractorService {
+
+	// Contractor
+
+	Contractor addContractor(Contractor contractor);
+
+	void updateContractor(Contractor contractor);
+
+	void deleteContractor(int contractId);
+
+	Contractor getByContractName(String contractName);
+
+	Contractor getByContractorName(String contractorName);
+	
+	List<Contractor> getByStartDate(LocalDate startDate);
+	
+	List<Contractor> getByEndDate(LocalDate endDate);
+
+	List<Contractor> getByStartDateAndEndDate(LocalDate startDate, LocalDate endDate);
+
+	List<Contractor> getAll();
+
+	// Maintenance
+
+	Maintenance addMaintenance(Maintenance maintenance,int contractId);
+
+	void updateMaintenance(Maintenance maintenance);
+
+	void deleteMaintenance(int maintenanceId);
+	
+	Maintenance getById(int maintenanceId);
+	
+	List<Maintenance> getAllMaintenence();	
+		
+	Maintenance getByMaintenanceName(String maintenanceName);
+	
+	Maintenance getByMaintenanceManager(String maintenanceManager);
+	
+	List<Maintenance> getByMaintenanceStartDate(LocalDate mStartDate);
+	
+	List<Maintenance> getByMaintenanceEndDate(LocalDate mEndDate);
+	
+	List<Maintenance> getByMaintenanceStatus(Status mStatus);
+	
+	List<Maintenance> getByMaintenancePriority(Priority mPriority);
+	
+	List<Maintenance> getByMaintenanceStartAndEndDate(LocalDate mStartDate,LocalDate mEndDate);
+	
+	List<Maintenance> getByMaintenanceStatusAndPriority(Status mStatus,Priority mPriority);
+	
+	Maintenance getByMaintenanceNameAndStatus(String maintenanceName,Status mStatus);
+	
+	Maintenance getByMaintenanceNameAndPriority(String maintenanceName,Priority mPriority);
+
+    //custom
+	
+	
+
+}
